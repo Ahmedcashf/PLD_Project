@@ -4,7 +4,6 @@ using System.IO;
 using System.Runtime.Serialization;
 using com.calitha.goldparser.lalr;
 using com.calitha.commons;
-using System.Windows.Forms;
 
 namespace com.calitha.goldparser
 {
@@ -157,16 +156,13 @@ namespace com.calitha.goldparser
     public class MyParser
     {
         private LALRParser parser;
-        ListBox lst;
-        ListBox ls;
-        public MyParser(string filename , ListBox lst , ListBox ls)
+
+        public MyParser(string filename)
         {
             FileStream stream = new FileStream(filename,
                                                FileMode.Open, 
                                                FileAccess.Read, 
                                                FileShare.Read);
-            this. lst = lst;
-            this.ls = ls;
             Init(stream);
             stream.Close();
         }
@@ -196,7 +192,6 @@ namespace com.calitha.goldparser
 
             parser.OnTokenError += new LALRParser.TokenErrorHandler(TokenErrorEvent);
             parser.OnParseError += new LALRParser.ParseErrorHandler(ParseErrorEvent);
-            parser.OnTokenRead += new LALRParser.TokenReadHandler(TokenReadEvent);
         }
 
         public void Parse(string source)
@@ -731,16 +726,9 @@ namespace com.calitha.goldparser
 
         private void ParseErrorEvent(LALRParser parser, ParseErrorEventArgs args)
         {
-            string message = "Parse error caused by token: '"+args.UnexpectedToken.ToString()+" in line: "+args.UnexpectedToken.Location.LineNr;
-            lst.Items.Add(message);
-            string m2 ="Expected token " + args.ExpectedTokens.ToString();
-            lst.Items.Add(m2 );
+            string message = "Parse error caused by token: '"+args.UnexpectedToken.ToString()+"'";
             //todo: Report message to UI?
         }
-        private void TokenReadEvent(LALRParser pr,TokenReadEventArgs args)
-        {
-            string info = args.Token.Text + "       " + (SymbolConstants)args.Token.Symbol.Id;
-            ls.Items.Add(info);
-        }
+
     }
 }
